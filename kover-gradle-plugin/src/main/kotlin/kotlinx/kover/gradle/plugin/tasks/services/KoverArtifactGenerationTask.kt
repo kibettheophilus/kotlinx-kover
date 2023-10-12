@@ -19,7 +19,6 @@ import javax.inject.*
  *
  * This artifact that will be shared between projects through dependencies for creating merged reports.
  */
-@CacheableTask
 internal abstract class KoverArtifactGenerationTask : DefaultTask() {
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -40,12 +39,10 @@ internal abstract class KoverArtifactGenerationTask : DefaultTask() {
     @get:OutputFile
     abstract val artifactFile: RegularFileProperty
 
-    private val rootDir: File = project.rootDir
-
     @TaskAction
     fun generate() {
         val mainContent = ArtifactContent(sources.toSet(), outputDirs.toSet(), reports.toSet())
-        val additional = additionalArtifacts.files.map { it.parseArtifactFile(rootDir) }
-        mainContent.joinWith(additional).write(artifactFile.get().asFile, rootDir)
+        val additional = additionalArtifacts.files.map { it.parseArtifactFile() }
+        mainContent.joinWith(additional).write(artifactFile.get().asFile)
     }
 }
